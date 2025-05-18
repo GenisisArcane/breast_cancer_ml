@@ -44,7 +44,8 @@ def predict():
         print("Received features:", data['features'].keys())
         
         # Reorder columns to match training order
-        features = features[FEATURE_ORDER]
+        # In app.py
+        features = np.array([[float(data['features'][f]) for f in FEATURE_ORDER]])
         
         scaled_features = scaler.transform(features)
         prediction = model.predict(scaled_features)
