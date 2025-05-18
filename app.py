@@ -29,28 +29,27 @@ def home():
 @app.route('/api/predict', methods=['POST'])
 def predict():
     try:
-        # Get data from request
         data = request.get_json()
+        if not data or 'features' not in data:
+            return jsonify({'error': 'Missing features data'}), 400
         
-        # Convert features to array in correct order
-        features = np.array([data['features'][f] for f in FEATURE_ORDER]).reshape(1, -1)
+        # Convert to DataFrame to preserve feature names
+        import pandas as pd
+        features = pd.DataFrame([data['features']])
         
-        # Scale features
+        # Reorder columns to match training order
+        features = features[FEATURE_ORDER]
+        
         scaled_features = scaler.transform(features)
-        
-        # Make prediction
         prediction = model.predict(scaled_features)
-        probability = model.predict_proba(scaled_features)[0][1]  # Probability of malignant
+        probability = model.predict_proba(scaled_features)[0][1]
         
-        # Prepare response
-        result = {
+        return jsonify({
             'prediction': 'Malignant' if prediction[0] == 1 else 'Benign',
             'probability': float(probability),
             'feature_importances': dict(zip(FEATURE_ORDER, model.feature_importances_.tolist()))
-        }
+        })
         
-        return jsonify(result)
-    
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
