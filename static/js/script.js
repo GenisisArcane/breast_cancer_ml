@@ -358,33 +358,57 @@ async function handleFormSubmit(e) {
 // Collect form data
 function collectFormData() {
     const features = {};
+    let isValid = true;
+    
     Object.keys(FEATURE_CONFIG).forEach(feature => {
         const input = document.getElementById(feature);
-        features[feature] = parseFloat(input.value) || 0;
+        const value = parseFloat(input.value);
+        
+        if (isNaN(value)) {
+            setInputError(input, 'Please enter a valid number');
+            isValid = false;
+        }
+        
+        features[feature] = value;
     });
-    console.log("Submitting:", features); // Verify in browser console
+    
+    if (!isValid) throw new Error('Validation failed');
     return features;
 }
 
 // Send prediction request to server
 async function sendPredictionRequest(features) {
-    // Ensure all features are included
-    const completeFeatures = {};
-    Object.keys(FEATURE_CONFIG).forEach(key => {
-        completeFeatures[key] = features[key] || 0; // Default to 0 if missing
+    // Convert all values to numbers
+    const payload = {};
+    Object.keys(features).forEach(key => {
+        payload[key] = parseFloat(features[key]) || 0;
     });
 
-    return await fetch('/api/predict', {
-        method: 'POST',
-        headers: { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            features: completeFeatures
-        })
-    });
+    try {
+        const response = await fetch('/api/predict', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                features: payload
+            })
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Server error:", errorData);
+            throw new Error(errorData.error || 'Prediction failed');
+        }
+        
+        return response;
+    } catch (error) {
+        console.error("Request failed:", error);
+        throw error;
+    }
 }
+
 
 // Display prediction results
 function displayResults({ prediction, probability, feature_importances }) {
