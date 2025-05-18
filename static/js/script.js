@@ -358,23 +358,31 @@ async function handleFormSubmit(e) {
 // Collect form data
 function collectFormData() {
     const features = {};
-    
     Object.keys(FEATURE_CONFIG).forEach(feature => {
-        features[feature] = parseFloat(document.getElementById(feature).value);
+        const input = document.getElementById(feature);
+        features[feature] = parseFloat(input.value) || 0;
     });
-    
+    console.log("Submitting:", features); // Verify in browser console
     return features;
 }
 
 // Send prediction request to server
 async function sendPredictionRequest(features) {
+    // Ensure all features are included
+    const completeFeatures = {};
+    Object.keys(FEATURE_CONFIG).forEach(key => {
+        completeFeatures[key] = features[key] || 0; // Default to 0 if missing
+    });
+
     return await fetch('/api/predict', {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
+            'Accept': 'application/json'
         },
-        body: JSON.stringify({ features })
+        body: JSON.stringify({
+            features: completeFeatures
+        })
     });
 }
 
