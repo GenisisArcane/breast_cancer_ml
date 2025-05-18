@@ -1,0 +1,66 @@
+/* Add to your stylesheet */
+.result-card {
+    max-width: 800px;
+    margin: 2rem auto;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.diagnosis-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 50rem;
+    color: white;
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-right: 1rem;
+}
+
+.confidence-level {
+    display: inline-block;
+    font-size: 1.1rem;
+}
+
+.feature-importance-chart {
+    margin-top: 1.5rem;
+}
+
+.chart-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.feature-name {
+    width: 200px;
+    font-weight: 500;
+}
+
+.chart-bar-container {
+    flex-grow: 1;
+    background: #f0f0f0;
+    height: 24px;
+    border-radius: 4px;
+    position: relative;
+    margin-left: 1rem;
+}
+
+.chart-bar {
+    background: #4e73df;
+    height: 100%;
+    border-radius: 4px;
+}
+
+.chart-value {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-size: 0.8rem;
+    text-shadow: 0 0 2px rgba(0,0,0,0.5);
+}
+
+.risk-critical-risk { color: #dc3545; font-weight: bold; }
+.risk-high-risk { color: #fd7e14; }
+.risk-moderate-risk { color: #ffc107; }
+.risk-low-risk { color: #28a745; }
