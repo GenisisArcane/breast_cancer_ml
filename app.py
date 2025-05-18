@@ -30,12 +30,18 @@ def home():
 def predict():
     try:
         data = request.get_json()
-        if not data or 'features' not in data:
-            return jsonify({'error': 'Missing features data'}), 400
+        print("Received data:", data)  # Log incoming data
         
-        # Convert to DataFrame to preserve feature names
-        import pandas as pd
-        features = pd.DataFrame([data['features']])
+        if not data:
+            print("Error: No JSON data received")
+            return jsonify({'error': 'No data received'}), 400
+            
+        if 'features' not in data:
+            print("Error: 'features' key missing")
+            return jsonify({'error': 'Missing features data'}), 400
+            
+        # Log feature keys for verification
+        print("Received features:", data['features'].keys())
         
         # Reorder columns to match training order
         features = features[FEATURE_ORDER]
