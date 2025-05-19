@@ -1,61 +1,61 @@
 // Complete Breast Cancer Prediction Web Application
 // Configuration - Feature definitions with descriptions and validation ranges
 const FEATURE_CONFIG = {
-    worst_radius: {
+    worst radius: {
         description: "Largest radius measurement",
         min: 7.93,
         max: 36.04,
         unit: "μm"
     },
-    worst_perimeter: {
+    worst perimeter: {
         description: "Largest perimeter measurement",
         min: 50.41,
         max: 251.2,
         unit: "μm"
     },
-    worst_concave_points: {
+    worst concave_points: {
         description: "Largest number of concave points",
         min: 0.0,
         max: 0.291,
         unit: ""
     },
-    mean_concave_points: {
+    mean concave_points: {
         description: "Mean number of concave portions of contour",
         min: 0.0,
         max: 0.2012,
         unit: ""
     },
-    worst_area: {
+    worst area: {
         description: "Largest area measurement",
         min: 185.2,
         max: 4254.0,
         unit: "μm²"
     },
-    worst_compactness: {
+    worst compactness: {
         description: "Most severe compactness measurement",
         min: 0.02729,
         max: 1.058,
         unit: ""
     },
-    mean_radius: {
+    mean radius: {
         description: "Mean radius of tumor cells (microns)",
         min: 6.981,
         max: 28.11,
         unit: "μm"
     },
-    texture_error: {
+    texture error: {
         description: "Standard error of texture measurements",
         min: 0.3602,
         max: 4.885,
         unit: ""
     },
-    worst_texture: {
+    worst texture: {
         description: "Most severe texture measurement",
         min: 12.02,
         max: 49.54,
         unit: ""
     },
-    area_error: {
+    area error: {
         description: "Standard error of area measurements",
         min: 6.802,
         max: 542.2,
