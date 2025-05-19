@@ -1,61 +1,61 @@
 // Complete Breast Cancer Prediction Web Application
 // Configuration - Feature definitions with descriptions and validation ranges
 const FEATURE_CONFIG = {
-    worst radius: {
+    worst_radius: {
         description: "Largest radius measurement",
         min: 7.93,
         max: 36.04,
         unit: "μm"
     },
-    worst perimeter: {
+    worst_perimeter: {
         description: "Largest perimeter measurement",
         min: 50.41,
         max: 251.2,
         unit: "μm"
     },
-    worst concave_points: {
+    worst_concave_points: {
         description: "Largest number of concave points",
         min: 0.0,
         max: 0.291,
         unit: ""
     },
-    mean concave_points: {
+    mean_concave_points: {
         description: "Mean number of concave portions of contour",
         min: 0.0,
         max: 0.2012,
         unit: ""
     },
-    worst area: {
+    worst_area: {
         description: "Largest area measurement",
         min: 185.2,
         max: 4254.0,
         unit: "μm²"
     },
-    worst compactness: {
+    worst_compactness: {
         description: "Most severe compactness measurement",
         min: 0.02729,
         max: 1.058,
         unit: ""
     },
-    mean radius: {
+    mean_radius: {
         description: "Mean radius of tumor cells (microns)",
         min: 6.981,
         max: 28.11,
         unit: "μm"
     },
-    texture error: {
+    texture_error: {
         description: "Standard error of texture measurements",
         min: 0.3602,
         max: 4.885,
         unit: ""
     },
-    worst texture: {
+    worst_texture: {
         description: "Most severe texture measurement",
         min: 12.02,
         max: 49.54,
         unit: ""
     },
-    area error: {
+    area_error: {
         description: "Standard error of area measurements",
         min: 6.802,
         max: 542.2,
@@ -83,43 +83,50 @@ function initApp() {
 // Create form inputs dynamically
 function createFormInputs() {
     const formFieldsContainer = document.getElementById('form-fields');
-    formFieldsContainer.innerHTML = '';
+    formFieldsContainer.innerHTML = ''; // Clear existing fields
 
-    Object.entries(FEATURE_CONFIG).forEach(([feature, config]) => {
+    Object.entries(FEATURE_CONFIG).forEach(([key, config]) => {
+        // Create the form group container
         const group = document.createElement('div');
         group.className = 'mb-3';
 
+        // Create the label
         const label = document.createElement('label');
         label.className = 'form-label';
-        label.htmlFor = feature;
-        label.textContent = formatFeatureName(feature);
+        label.textContent = key.replace(/_/g, ' '); // Display with spaces
+        label.htmlFor = key; // Associate with input ID
 
+        // Create input group (for units)
         const inputGroup = document.createElement('div');
         inputGroup.className = 'input-group';
 
+        // Create the input field
         const input = document.createElement('input');
         input.type = 'number';
         input.className = 'form-control feature-input';
-        input.id = feature;
-        input.name = feature;
+        input.id = key; // ID keeps underscores
+        input.name = key;
         input.step = '0.0001';
         input.required = true;
         input.min = config.min;
         input.max = config.max;
-        input.dataset.feature = feature;
-        input.setAttribute('aria-describedby', `${feature}-help`);
+        input.dataset.feature = key;
 
-        const unitSpan = document.createElement('span');
-        unitSpan.className = 'input-group-text';
-        unitSpan.textContent = config.unit;
+        // Add unit if specified
+        if (config.unit) {
+            const unitSpan = document.createElement('span');
+            unitSpan.className = 'input-group-text';
+            unitSpan.textContent = config.unit;
+            inputGroup.appendChild(unitSpan);
+        }
 
+        // Create help text
         const helpText = document.createElement('div');
-        helpText.id = `${feature}-help`;
         helpText.className = 'form-text';
         helpText.textContent = config.description;
 
-        inputGroup.appendChild(input);
-        if (config.unit) inputGroup.appendChild(unitSpan);
+        // Assemble the elements
+        inputGroup.prepend(input); // Input first, then unit
         group.appendChild(label);
         group.appendChild(inputGroup);
         group.appendChild(helpText);
@@ -260,15 +267,23 @@ function collectFormData() {
     return features;
 }
 
+function formatFeatureName(feature) {
+    return feature.replace(/_/g, ' ');  // Convert underscores to spaces
+}
 // Send prediction request to server
 async function sendPredictionRequest(features) {
-    // Convert all values to numbers
+    // Convert feature names from underscores to spaces to match backend
+    const formatFeatureName = (feature) => feature.replace(/_/g, ' ');
+    
+    // Prepare payload with properly formatted feature names
     const payload = {};
     Object.keys(features).forEach(key => {
-        payload[key] = parseFloat(features[key]) || 0;
+        const formattedKey = formatFeatureName(key);
+        payload[formattedKey] = parseFloat(features[key]) || 0;
     });
 
     try {
+        console.log("Sending features:", Object.keys(payload)); // Debug log
         const response = await fetch('/api/predict', {
             method: 'POST',
             headers: { 
@@ -292,8 +307,6 @@ async function sendPredictionRequest(features) {
         throw error;
     }
 }
-
-
 // Display prediction results
 function displayResults({ prediction, probability, feature_importances }) {
     resultContainer.innerHTML = '';
