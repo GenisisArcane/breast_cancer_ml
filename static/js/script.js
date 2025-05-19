@@ -1,46 +1,22 @@
 // Complete Breast Cancer Prediction Web Application
 // Configuration - Feature definitions with descriptions and validation ranges
 const FEATURE_CONFIG = {
-    mean_radius: {
-        description: "Mean radius of tumor cells (microns)",
-        min: 6.981,
-        max: 28.11,
+    worst_radius: {
+        description: "Largest radius measurement",
+        min: 7.93,
+        max: 36.04,
         unit: "μm"
     },
-    mean_texture: {
-        description: "Mean texture (standard deviation of gray-scale values)",
-        min: 9.71,
-        max: 39.28,
-        unit: ""
-    },
-    mean_perimeter: {
-        description: "Mean perimeter of tumor cells (microns)",
-        min: 43.79,
-        max: 188.5,
+    worst_perimeter: {
+        description: "Largest perimeter measurement",
+        min: 50.41,
+        max: 251.2,
         unit: "μm"
     },
-    mean_area: {
-        description: "Mean area of tumor cells (square microns)",
-        min: 143.5,
-        max: 2501.0,
-        unit: "μm²"
-    },
-    mean_smoothness: {
-        description: "Mean local variation in radius lengths",
-        min: 0.05263,
-        max: 0.1634,
-        unit: ""
-    },
-    mean_compactness: {
-        description: "Mean compactness (perimeter² / area - 1.0)",
-        min: 0.01938,
-        max: 0.3454,
-        unit: ""
-    },
-    mean_concavity: {
-        description: "Mean severity of concave portions of contour",
+    worst_concave_points: {
+        description: "Largest number of concave points",
         min: 0.0,
-        max: 0.4268,
+        max: 0.291,
         unit: ""
     },
     mean_concave_points: {
@@ -49,22 +25,22 @@ const FEATURE_CONFIG = {
         max: 0.2012,
         unit: ""
     },
-    mean_symmetry: {
-        description: "Mean symmetry of tumor cell",
-        min: 0.106,
-        max: 0.304,
+    worst_area: {
+        description: "Largest area measurement",
+        min: 185.2,
+        max: 4254.0,
+        unit: "μm²"
+    },
+    worst_compactness: {
+        description: "Most severe compactness measurement",
+        min: 0.02729,
+        max: 1.058,
         unit: ""
     },
-    mean_fractal_dimension: {
-        description: "Mean 'coastline approximation' - fractal dimension",
-        min: 0.04996,
-        max: 0.09744,
-        unit: ""
-    },
-    radius_error: {
-        description: "Standard error of radius measurements",
-        min: 0.1115,
-        max: 2.873,
+    mean_radius: {
+        description: "Mean radius of tumor cells (microns)",
+        min: 6.981,
+        max: 28.11,
         unit: "μm"
     },
     texture_error: {
@@ -73,11 +49,11 @@ const FEATURE_CONFIG = {
         max: 4.885,
         unit: ""
     },
-    perimeter_error: {
-        description: "Standard error of perimeter measurements",
-        min: 0.757,
-        max: 21.98,
-        unit: "μm"
+    worst_texture: {
+        description: "Most severe texture measurement",
+        min: 12.02,
+        max: 49.54,
+        unit: ""
     },
     area_error: {
         description: "Standard error of area measurements",
@@ -85,102 +61,10 @@ const FEATURE_CONFIG = {
         max: 542.2,
         unit: "μm²"
     },
-    smoothness_error: {
-        description: "Standard error of smoothness measurements",
-        min: 0.001713,
-        max: 0.03113,
-        unit: ""
-    },
-    compactness_error: {
-        description: "Standard error of compactness measurements",
-        min: 0.002252,
-        max: 0.1354,
-        unit: ""
-    },
-    concavity_error: {
-        description: "Standard error of concavity measurements",
-        min: 0.0,
-        max: 0.396,
-        unit: ""
-    },
-    concave_points_error: {
-        description: "Standard error of concave points measurements",
-        min: 0.0,
-        max: 0.05279,
-        unit: ""
-    },
-    symmetry_error: {
-        description: "Standard error of symmetry measurements",
-        min: 0.007882,
-        max: 0.07895,
-        unit: ""
-    },
-    fractal_dimension_error: {
-        description: "Standard error of fractal dimension measurements",
-        min: 0.0008948,
-        max: 0.02984,
-        unit: ""
-    },
-    worst_radius: {
-        description: "Largest radius measurement",
-        min: 7.93,
-        max: 36.04,
-        unit: "μm"
-    },
-    worst_texture: {
-        description: "Most severe texture measurement",
-        min: 12.02,
-        max: 49.54,
-        unit: ""
-    },
-    worst_perimeter: {
-        description: "Largest perimeter measurement",
-        min: 50.41,
-        max: 251.2,
-        unit: "μm"
-    },
-    worst_area: {
-        description: "Largest area measurement",
-        min: 185.2,
-        max: 4254.0,
-        unit: "μm²"
-    },
-    worst_smoothness: {
-        description: "Most severe smoothness measurement",
-        min: 0.07117,
-        max: 0.2226,
-        unit: ""
-    },
-    worst_compactness: {
-        description: "Most severe compactness measurement",
-        min: 0.02729,
-        max: 1.058,
-        unit: ""
-    },
-    worst_concavity: {
-        description: "Most severe concavity measurement",
-        min: 0.0,
-        max: 1.252,
-        unit: ""
-    },
-    worst_concave_points: {
-        description: "Largest number of concave points",
-        min: 0.0,
-        max: 0.291,
-        unit: ""
-    },
-    worst_symmetry: {
-        description: "Most asymmetric measurement",
-        min: 0.1565,
-        max: 0.6638,
-        unit: ""
-    },
-    worst_fractal_dimension: {
-        description: "Highest fractal dimension measurement",
-        min: 0.05504,
-        max: 0.2075,
-        unit: ""
-    }
+    
+    
+    
+    
 };
 
 // DOM Elements
