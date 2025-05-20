@@ -61,7 +61,62 @@ const FEATURE_CONFIG = {
         max: 542.2,
         unit: "μm²"
     },
-    
+
+    mean_smoothness: {
+        description: "Mean local variation in radius lengths",
+        min: 0.05263,
+        max: 0.1634,
+        unit: ""
+    },
+    mean_symmetry: {
+        description: "Mean symmetry of tumor cell nuclei",
+        min: 0.106,
+        max: 0.304,
+        unit: ""
+    },
+    worst_smoothness: {
+        description: "Most severe local variation in radius lengths",
+        min: 0.07117,
+        max: 0.2226,
+        unit: ""
+    },
+    worst_symmetry: {
+        description: "Most asymmetric tumor cell nuclei measurement",
+        min: 0.1565,
+        max: 0.6638,
+        unit: ""
+    },
+    mean_concavity: {
+        description: "Mean severity of concave portions of contour",
+        min: 0.0,
+        max: 0.4268,
+        unit: ""
+    },
+    worst_concavity: {
+        description: "Most severe concave portions of contour",
+        min: 0.0,
+        max: 1.252,
+        unit: ""
+    },
+    compactness_error: {
+        description: "Standard error of compactness measurements",
+        min: 0.002252,
+        max: 0.1354,
+        unit: ""
+    },
+    concavity_error: {
+        description: "Standard error of concavity measurements",
+        min: 0.0,
+        max: 0.396,
+        unit: ""
+    },
+    fractal_dimension_error: {
+        description: "Standard error of fractal dimension measurements",
+        min: 0.0008948,
+        max: 0.02984,
+        unit: ""
+    }
+  
     
     
     
