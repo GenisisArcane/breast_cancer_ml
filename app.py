@@ -6,7 +6,7 @@ import numpy as np
 app = Flask(__name__)
 
 # Load model and scaler
-model = joblib.load('models/random_forest_model.pkl')
+model = joblib.load('models/best_model.pkl')
 scaler = joblib.load('models/scaler.pkl')
 
 # Feature order must match training
@@ -21,6 +21,15 @@ FEATURE_ORDER = [
     'texture error',  # Captures measurement variability
     'worst texture',
     'area error'
+    'mean smoothness',        # Local variation in radius lengths
+    'mean symmetry',          # Cell symmetry
+    'worst smoothness',       # Most abnormal smoothness
+    'worst symmetry',         # Most asymmetric cells
+    'mean concavity',         # Severity of concave contours
+    'worst concavity',        # Most severe concavity
+    'compactness error',      # Variability in compactness
+    'concavity error',        # Variability in concavity
+    'fractal dimension error'
 ]
 
 @app.route('/')
