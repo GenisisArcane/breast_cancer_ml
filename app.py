@@ -66,9 +66,10 @@ def predict():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/')  # Added root route
+
+@app.route('/')
 def home():
-    return "Breast Cancer Prediction API is running"
+    return render_template('index.html')  # Or a simple response
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
