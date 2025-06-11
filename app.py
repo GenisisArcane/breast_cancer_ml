@@ -40,15 +40,15 @@ def home():
 def predict():
     try:
         data = request.get_json()
-        print("Received data:", data)  # Log incoming data
-        
         if not data:
-            print("Error: No JSON data received")
-            return jsonify({'error': 'No data received'}), 400
+            return jsonify({"error": "No JSON data received"}), 400
             
-        if 'features' not in data:
-            print("Error: 'features' key missing")
-            return jsonify({'error': 'Missing features data'}), 400
+        # Your prediction logic here
+        return jsonify(result)
+        
+    except Exception as e:
+        # Ensure errors return JSON, not HTML
+        return jsonify({"error": str(e)}), 500
             
         # Log feature keys for verification
         print("Received features:", data['features'].keys())
