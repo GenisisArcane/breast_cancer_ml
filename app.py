@@ -1,8 +1,8 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 import joblib
 import numpy as np
+import os  # Added missing import
 from sklearn.inspection import permutation_importance
-
 
 app = Flask(__name__)
 
@@ -16,20 +16,20 @@ FEATURE_ORDER = [
     'worst perimeter',
     'worst concave points',
     'mean concave points',
-    'worst area',
+    'worst area', 
     'worst compactness',
     'mean radius',
-    'texture error',  # Captures measurement variability
+    'texture error',
     'worst texture',
     'area error',
-    'mean smoothness',        # Local variation in radius lengths
-    'mean symmetry',          # Cell symmetry
-    'worst smoothness',       # Most abnormal smoothness
-    'worst symmetry',         # Most asymmetric cells
-    'mean concavity',         # Severity of concave contours
-    'worst concavity',        # Most severe concavity
-    'compactness error',      # Variability in compactness
-    'concavity error',        # Variability in concavity
+    'mean smoothness',
+    'mean symmetry',
+    'worst smoothness',
+    'worst symmetry',
+    'mean concavity',
+    'worst concavity',
+    'compactness error',
+    'concavity error',
     'fractal dimension error'
 ]
 
@@ -41,55 +41,34 @@ def predict():
             return jsonify({"error": "Missing features data"}), 400
 
         # Get features in correct order
-        features = [data['features'].get(f, 0) for f in FEATURE_ORDER]
+        features = [float(data['features'].get(f, 0)) for f in FEATURE_ORDER]
         scaled_features = scaler.transform([features])
         
         # Make prediction
         prediction = model.predict(scaled_features)[0]
         probability = model.predict_proba(scaled_features)[0][1]
         
-        # Get feature importance based on model type
+        # Get feature importance
         if hasattr(model, 'feature_importances_'):
-            # Random Forest/Decision Tree
             importances = model.feature_importances_.tolist()
         elif hasattr(model, 'coef_'):
-            # Logistic Regression/SVM (absolute coefficients)
             importances = np.abs(model.coef_[0]).tolist()
         else:
-            # SVM with RBF kernel (no native importance)
-            result = permutation_importance(model, X_test_scaled, y_test, n_repeats=10)
-            importances = result.importances_mean.tolist()
+            # For demonstration - in production load test data or cache this
+            importances = [1.0/len(FEATURE_ORDER)] * len(FEATURE_ORDER)
         
-        response = {
+        return jsonify({
             "prediction": "Malignant" if prediction == 1 else "Benign",
             "probability": float(probability),
             "feature_importances": dict(zip(FEATURE_ORDER, importances))
-        }
-        
-        return jsonify(response)
-        
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-            
-        # Log feature keys for verification
-        print("Received features:", data['features'].keys())
-        
-        # Reorder columns to match training order
-        # In app.py
-        features = np.array([[float(data['features'][f]) for f in FEATURE_ORDER]])
-        
-        scaled_features = scaler.transform(features)
-        prediction = model.predict(scaled_features)
-        probability = model.predict_proba(scaled_features)[0][1]
-        
-        return jsonify({
-            'prediction': 'Malignant' if prediction[0] == 1 else 'Benign',
-            'probability': float(probability),
-            'feature_importances': dict(zip(FEATURE_ORDER, model.feature_importances_.tolist()))
         })
         
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/')  # Added root route
+def home():
+    return "Breast Cancer Prediction API is running"
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
