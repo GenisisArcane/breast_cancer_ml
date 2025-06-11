@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 import joblib
 import numpy as np
+from sklearn.inspection import permutation_importance
 
 
 app = Flask(__name__)
@@ -32,34 +33,37 @@ FEATURE_ORDER = [
     'fractal dimension error'
 ]
 
-@app.route('/')
-def home():
-    return render_template('index.html')
-
 @app.route('/api/predict', methods=['POST'])
 def predict():
     try:
         data = request.get_json()
-        
-        # Validate input
         if not data or 'features' not in data:
             return jsonify({"error": "Missing features data"}), 400
 
         # Get features in correct order
         features = [data['features'].get(f, 0) for f in FEATURE_ORDER]
-        
-        # Scale features
         scaled_features = scaler.transform([features])
         
         # Make prediction
         prediction = model.predict(scaled_features)[0]
         probability = model.predict_proba(scaled_features)[0][1]
         
-        # Prepare proper response
+        # Get feature importance based on model type
+        if hasattr(model, 'feature_importances_'):
+            # Random Forest/Decision Tree
+            importances = model.feature_importances_.tolist()
+        elif hasattr(model, 'coef_'):
+            # Logistic Regression/SVM (absolute coefficients)
+            importances = np.abs(model.coef_[0]).tolist()
+        else:
+            # SVM with RBF kernel (no native importance)
+            result = permutation_importance(model, X_test_scaled, y_test, n_repeats=10)
+            importances = result.importances_mean.tolist()
+        
         response = {
             "prediction": "Malignant" if prediction == 1 else "Benign",
             "probability": float(probability),
-            "feature_importances": dict(zip(FEATURE_ORDER, model.feature_importances_.tolist()))
+            "feature_importances": dict(zip(FEATURE_ORDER, importances))
         }
         
         return jsonify(response)
