@@ -327,38 +327,33 @@ function formatFeatureName(feature) {
 }
 // Send prediction request to server
 async function sendPredictionRequest(features) {
-    // Convert feature names from underscores to spaces to match backend
-    const formatFeatureName = (feature) => feature.replace(/_/g, ' ');
-    
-    // Prepare payload with properly formatted feature names
-    const payload = {};
-    Object.keys(features).forEach(key => {
-        const formattedKey = formatFeatureName(key);
-        payload[formattedKey] = parseFloat(features[key]) || 0;
-    });
-
     try {
-        console.log("Sending features:", Object.keys(payload)); // Debug log
         const response = await fetch('/api/predict', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Accept': 'application/json'  // Explicitly expect JSON
             },
-            body: JSON.stringify({
-                features: payload
-            })
+            body: JSON.stringify({ features })
         });
+
+        // First check if response is JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            throw new Error(`Expected JSON, got: ${text.substring(0, 100)}...`);
+        }
+
+        const data = await response.json();
         
         if (!response.ok) {
-            const errorData = await response.json();
-            console.error("Server error:", errorData);
-            throw new Error(errorData.error || 'Prediction failed');
+            throw new Error(data.error || 'Prediction failed');
         }
         
-        return response;
+        return data;
     } catch (error) {
-        console.error("Request failed:", error);
+        console.error('Request failed:', error);
+        showAlert(`Prediction error: ${error.message}`);
         throw error;
     }
 }
