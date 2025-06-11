@@ -40,14 +40,31 @@ def home():
 def predict():
     try:
         data = request.get_json()
-        if not data:
-            return jsonify({"error": "No JSON data received"}), 400
-            
-        # Your prediction logic here
-        return jsonify(result)
+        
+        # Validate input
+        if not data or 'features' not in data:
+            return jsonify({"error": "Missing features data"}), 400
+
+        # Get features in correct order
+        features = [data['features'].get(f, 0) for f in FEATURE_ORDER]
+        
+        # Scale features
+        scaled_features = scaler.transform([features])
+        
+        # Make prediction
+        prediction = model.predict(scaled_features)[0]
+        probability = model.predict_proba(scaled_features)[0][1]
+        
+        # Prepare proper response
+        response = {
+            "prediction": "Malignant" if prediction == 1 else "Benign",
+            "probability": float(probability),
+            "feature_importances": dict(zip(FEATURE_ORDER, model.feature_importances_.tolist()))
+        }
+        
+        return jsonify(response)
         
     except Exception as e:
-        # Ensure errors return JSON, not HTML
         return jsonify({"error": str(e)}), 500
             
         # Log feature keys for verification
