@@ -20,7 +20,7 @@ FEATURE_ORDER = [
     'mean radius',
     'texture error',  # Captures measurement variability
     'worst texture',
-    'area error'
+    'area error',
     'mean smoothness',        # Local variation in radius lengths
     'mean symmetry',          # Cell symmetry
     'worst smoothness',       # Most abnormal smoothness
