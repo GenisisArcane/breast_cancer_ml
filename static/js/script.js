@@ -328,34 +328,39 @@ function formatFeatureName(feature) {
 // Send prediction request to server
 async function sendPredictionRequest(features) {
     try {
+        console.log("Sending features:", features); // Debug log
+        
         const response = await fetch('/api/predict', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'  // Explicitly expect JSON
+                'Accept': 'application/json'
             },
             body: JSON.stringify({ features })
         });
 
-        // First check if response is JSON
+        // Handle non-JSON responses
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
             const text = await response.text();
-            throw new Error(`Expected JSON, got: ${text.substring(0, 100)}...`);
+            console.error("Non-JSON response:", text);
+            throw new Error(`Server error: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
         
         if (!response.ok) {
-            throw new Error(data.error || 'Prediction failed');
+            console.error("API error:", data);
+            throw new Error(data.error || `Prediction failed (${response.status})`);
         }
         
         return data;
     } catch (error) {
-        console.error('Request failed:', error);
+        console.error('Full error:', error);
         showAlert(`Prediction error: ${error.message}`);
         throw error;
     }
+}
 }
 // Display prediction results
 function displayResults({ prediction, probability, feature_importances }) {
