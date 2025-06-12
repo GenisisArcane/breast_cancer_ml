@@ -1,14 +1,18 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template, send_from_directory
 import joblib
 import numpy as np
-import os  # Added missing import
+import os
 from sklearn.inspection import permutation_importance
 
 app = Flask(__name__)
 
 # Load model and scaler
-model = joblib.load('models/best_model.pkl')
-scaler = joblib.load('models/scaler.pkl')
+try:
+    model = joblib.load('models/best_model.pkl')
+    scaler = joblib.load('models/scaler.pkl')
+except Exception as e:
+    print(f"Error loading model files: {str(e)}")
+    raise
 
 # Feature order must match training
 FEATURE_ORDER = [
@@ -54,7 +58,6 @@ def predict():
         elif hasattr(model, 'coef_'):
             importances = np.abs(model.coef_[0]).tolist()
         else:
-            # For demonstration - in production load test data or cache this
             importances = [1.0/len(FEATURE_ORDER)] * len(FEATURE_ORDER)
         
         return jsonify({
@@ -64,13 +67,20 @@ def predict():
         })
         
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
+        app.logger.error(f"Prediction error: {str(e)}")
+        return jsonify({"error": "Prediction failed"}), 500
 
 @app.route('/')
 def home():
-    return render_template('index.html')  # Or a simple response
+    return render_template('index.html')
+
+@app.route('/health')
+def health():
+    return jsonify({
+        "status": "healthy",
+        "model_loaded": hasattr(model, 'predict')
+    })
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port)
