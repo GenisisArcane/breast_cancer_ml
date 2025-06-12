@@ -135,60 +135,73 @@ function initApp() {
     restoreFormData();
 }
 
-// Create form inputs dynamically
+// In your script.js
+const FEATURE_CONFIG = {
+    'worst_radius': {
+        description: "Largest radius measurement (microns)",
+        min: 7.93,
+        max: 36.04,
+        unit: "μm"
+    },
+    'worst_perimeter': {
+        description: "Largest perimeter measurement (microns)",
+        min: 50.41,
+        max: 251.2,
+        unit: "μm"
+    },
+    // Add all 19 features in this format...
+};
+
 function createFormInputs() {
-    const formFieldsContainer = document.getElementById('form-fields');
-    formFieldsContainer.innerHTML = ''; // Clear existing fields
+    const container = document.getElementById('form-fields');
+    container.innerHTML = ''; // Clear existing fields
 
-    Object.entries(FEATURE_CONFIG).forEach(([key, config]) => {
-        // Create the form group container
+    Object.entries(FEATURE_CONFIG).forEach(([feature, config]) => {
         const group = document.createElement('div');
-        group.className = 'mb-3';
+        group.className = 'form-group col-md-6';
 
-        // Create the label
         const label = document.createElement('label');
-        label.className = 'form-label';
-        label.textContent = key.replace(/_/g, ' '); // Display with spaces
-        label.htmlFor = key; // Associate with input ID
+        label.textContent = feature.replace(/_/g, ' ');
+        label.htmlFor = feature;
 
-        // Create input group (for units)
-        const inputGroup = document.createElement('div');
-        inputGroup.className = 'input-group';
-
-        // Create the input field
         const input = document.createElement('input');
         input.type = 'number';
-        input.className = 'form-control feature-input';
-        input.id = key; // ID keeps underscores
-        input.name = key;
-        input.step = '0.0001';
-        input.required = true;
+        input.className = 'form-control';
+        input.id = feature;
+        input.name = feature;
         input.min = config.min;
         input.max = config.max;
-        input.dataset.feature = key;
+        input.step = '0.0001';
+        input.required = true;
 
-        // Add unit if specified
         if (config.unit) {
             const unitSpan = document.createElement('span');
             unitSpan.className = 'input-group-text';
             unitSpan.textContent = config.unit;
-            inputGroup.appendChild(unitSpan);
+            input.classList.add('with-unit');
         }
 
-        // Create help text
-        const helpText = document.createElement('div');
-        helpText.className = 'form-text';
+        const helpText = document.createElement('small');
+        helpText.className = 'form-text text-muted';
         helpText.textContent = config.description;
 
-        // Assemble the elements
-        inputGroup.prepend(input); // Input first, then unit
         group.appendChild(label);
-        group.appendChild(inputGroup);
+        group.appendChild(input);
+        if (config.unit) group.appendChild(unitSpan);
         group.appendChild(helpText);
-        formFieldsContainer.appendChild(group);
+        container.appendChild(group);
     });
 }
 
+// Initialize form when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    createFormInputs();
+    
+    document.getElementById('prediction-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        // Your existing submission handler
+    });
+});
 // Format feature names for display
 function formatFeatureName(feature) {
     return feature
