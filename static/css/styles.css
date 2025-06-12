@@ -64,3 +64,23 @@
 .risk-high-risk { color: #fd7e14; }
 .risk-moderate-risk { color: #ffc107; }
 .risk-low-risk { color: #28a745; }
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.with-unit {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.input-group-text {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-left: none;
+    border-radius: 0.25rem;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
